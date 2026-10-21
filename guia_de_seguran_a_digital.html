@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guia de Segurança Digital para a Melhor Idade</title>
+  <style>
+    /* ==========================================================================
+       RESET E CONFIGURAÇÕES BÁSICAS
+       ========================================================================== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      /* Cores Base de Alto Contraste */
+      --bg-principal: #f8fafc;
+      --bg-card: #ffffff;
+      --texto-cor: #0f172a;
+      --texto-suave: #334155;
+      
+      /* Cores de Destaque */
+      --azul-primario: #004085;
+      --azul-hover: #002752;
+      --amarelo-alerta: #fff3cd;
+      --amarelo-texto: #856404;
+      --amarelo-borda: #ffeeba;
+      
+      /* Status */
+      --perigo-bg: #f8d7da;
+      --perigo-texto: #721c24;
+      --perigo-borda: #f5c6cb;
+      
+      --sucesso-bg: #d4edda;
+      --sucesso-texto: #155724;
+      --sucesso-borda: #c3e6cb;
+
+      /* Bordas e Espaçamentos */
+      --raio-borda: 16px;
+      --sombra: 0 4px 12px rgba(0, 0, 0, 0.1);
+      --fonte-tamanho-base: 20px;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-principal);
+      color: var(--texto-cor);
+      font-size: var(--fonte-tamanho-base);
+      line-height: 1.6;
+      padding-bottom: 60px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Container Centralizado com Maior Acessibilidade */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* ==========================================================================
+       ACCESSIBILITY HACKS COM CSS PURO (:checked)
+       ========================================================================== */
+    /* Checkbox Escondidos para Controle de Estado */
+    .state-toggle {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+      width: 0;
+      height: 0;
+    }
+
+    /* Modo Texto Extra Grande */
+    #toggle-fonte:checked ~ div.app-wrapper {
+      font-size: 25px;
+    }
+    #toggle-fonte:checked ~ div.app-wrapper h1 { font-size: 2.6rem; }
+    #toggle-fonte:checked ~ div.app-wrapper h2 { font-size: 2.1rem; }
+    #toggle-fonte:checked ~ div.app-wrapper h3 { font-size: 1.7rem; }
+    #toggle-fonte:checked ~ div.app-wrapper .btn-acao { font-size: 1.4rem; padding: 20px 28px; }
+
+    /* Modo Alto Contraste Noturno */
+    #toggle-contraste:checked ~ div.app-wrapper {
+      --bg-principal: #000000;
+      --bg-card: #121212;
+      --texto-cor: #ffffff;
+      --texto-suave: #e2e8f0;
+      --azul-primario: #0056b3;
+      --azul-hover: #3385ff;
+      --sombra: 0 4px 12px rgba(255, 255, 255, 0.2);
+    }
+
+    /* Estilo dos Botões de Acessibilidade (Switches) */
+    .bar-acessibilidade {
+      background-color: var(--azul-primario);
+      color: white;
+      padding: 15px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .bar-acessibilidade .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .lbl-acessibilidade {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background-color: #ffffff;
+      color: #000000;
+      font-weight: bold;
+      padding: 12px 20px;
+      border-radius: 50px;
+      cursor: pointer;
+      user-select: none;
+      border: 3px solid transparent;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: all 0.2s;
+    }
+
+    .lbl-acessibilidade:hover {
+      transform: translateY(-2px);
+      background-color: #f1f5f9;
+    }
+
+    .lbl-acessibilidade:active {
+      transform: translateY(0);
+    }
+
+    /* Indicador Visual do Estado (Ligado / Desligado) */
+    #toggle-fonte:checked ~ .bar-acessibilidade label[for="toggle-fonte"],
+    #toggle-contraste:checked ~ .bar-acessibilidade label[for="toggle-contraste"] {
+      background-color: #ffd700;
+      color: #000000;
+      border-color: #ffffff;
+    }
+
+    /* ==========================================================================
+       CABEÇALHO / HEADER
+       ========================================================================== */
+    header {
+      text-align: center;
+      padding: 40px 20px 30px;
+      background-color: var(--bg-card);
+      border-bottom: 4px solid var(--azul-primario);
+      margin-bottom: 30px;
+      border-radius: 0 0 var(--raio-borda) var(--raio-borda);
+      box-shadow: var(--sombra);
+    }
+
+    header h1 {
+      color: var(--azul-primario);
+      font-size: 2.2rem;
+      margin-bottom: 12px;
+      line-height: 1.2;
+    }
+
+    header p.subtitulo {
+      color: var(--texto-suave);
+      font-size: 1.25rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    /* ==========================================================================
+       CARDS E SEÇÕES
+       ========================================================================== */
+    .secao-titulo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.8rem;
+      color: var(--azul-primario);
+      margin: 40px 0 20px;
+      padding-bottom: 8px;
+      border-bottom: 3px solid var(--azul-primario);
+    }
+
+    .card {
+      background-color: var(--bg-card);
+      border-radius: var(--raio-borda);
+      padding: 25px;
+      margin-bottom: 25px;
+      box-shadow: var(--sombra);
+      border: 2px solid rgba(0,0,0,0.05);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 15px;
+    }
+
+    .card-header h3 {
+      font-size: 1.4rem;
+      color: var(--texto-cor);
+    }
+
+    .card-icon {
+      font-size: 2.2rem;
+      line-height: 1;
+      background: rgba(0, 64, 133, 0.1);
+      padding: 12px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 60px;
+      min-height: 60px;
+    }
+
+    /* Listas de Dicas */
+    .lista-dicas {
+      list-style: none;
+    }
+
+    .lista-dicas li {
+      position: relative;
+      padding-left: 35px;
+      margin-bottom: 15px;
+    }
+
+    .lista-dicas li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: #28a745;
+      font-weight: bold;
+      font-size: 1.3rem;
+    }
+
+    /* Caixa de Alerta Dentro dos Cards */
+    .alerta-caixa {
+      background-color: var(--amarelo-alerta);
+      color: var(--amarelo-texto);
+      border: 2px solid var(--amarelo-borda);
+      padding: 15px;
+      border-radius: 12px;
+      margin-top: 15px;
+      font-weight: 600;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    /* ==========================================================================
+       QUIZ DE ATENÇÃO (COM <details> E <summary>)
+       ========================================================================== */
+    .quiz-card {
+      background-color: var(--bg-card);
+      border-radius: var(--raio-borda);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--sombra);
+      border-left: 6px solid var(--azul-primario);
+    }
+
+    .quiz-pergunta {
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: 15px;
+    }
+
+    details {
+      margin-top: 10px;
+      background-color: rgba(0,0,0,0.03);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    summary {
+      padding: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      background-color: var(--azul-primario);
+      color: white;
+      border-radius: 8px;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::after {
+      content: "👇 Clique para ver a resposta";
+      font-size: 0.9rem;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    details[open] summary::after {
+      content: "👆 Ocultar resposta";
+    }
+
+    .resposta-conteudo {
+      padding: 20px;
+      border-radius: 0 0 10px 10px;
+    }
+
+    .resposta-golpe {
+      background-color: var(--perigo-bg);
+      color: var(--perigo-texto);
+      border: 2px solid var(--perigo-borda);
+    }
+
+    .resposta-seguro {
+      background-color: var(--sucesso-bg);
+      color: var(--sucesso-texto);
+      border: 2px solid var(--sucesso-borda);
+    }
+
+    /* ==========================================================================
+       CONTATOS DE EMERGÊNCIA
+       ========================================================================== */
+    .grid-emergencia {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .card-emergencia {
+      background-color: var(--bg-card);
+      border: 3px solid var(--azul-primario);
+      border-radius: var(--raio-borda);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--sombra);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card-emergencia h3 {
+      font-size: 1.3rem;
+      margin-bottom: 5px;
+    }
+
+    .card-emergencia p {
+      font-size: 1rem;
+      color: var(--texto-suave);
+      margin-bottom: 15px;
+    }
+
+    .btn-ligar {
+      display: inline-block;
+      width: 100%;
+      background-color: #28a745;
+      color: white;
+      text-decoration: none;
+      font-size: 1.4rem;
+      font-weight: bold;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn-ligar:hover {
+      background-color: #218838;
+      transform: scale(1.02);
+    }
+
+    .btn-ligar:active {
+      transform: scale(0.98);
+    }
+
+    /* ==========================================================================
+       RODAPÉ
+       ========================================================================== */
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      padding: 30px 20px;
+      background-color: var(--bg-card);
+      border-top: 2px solid rgba(0,0,0,0.1);
+      color: var(--texto-suave);
+    }
+
+    /* ==========================================================================
+       RESPONSIVIDADE E AJUSTES DE TELA
+       ========================================================================== */
+    @media (max-width: 600px) {
+      :root {
+        --fonte-tamanho-base: 18px;
+      }
+      
+      .bar-acessibilidade .container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .lbl-acessibilidade {
+        justify-content: center;
+      }
+
+      header h1 {
+        font-size: 1.8rem;
+      }
+
+      summary::after {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CONTROLES DE ACESSIBILIDADE (HACK CSS COM CHECKBOXES) -->
+  <input type="checkbox" id="toggle-fonte" class="state-toggle" aria-label="Alternar Fonte Extra Grande">
+  <input type="checkbox" id="toggle-contraste" class="state-toggle" aria-label="Alternar Alto Contraste">
+
+  <!-- BARRA FIXA DE ACESSIBILIDADE -->
+  <nav class="bar-acessibilidade" aria-label="Acessibilidade">
+    <div class="container">
+      <label for="toggle-fonte" class="lbl-acessibilidade" role="button" tabindex="0">
+        <span style="font-size: 1.4rem;">🔍</span>
+        <span>Aumentar Texto</span>
+      </label>
+      
+      <label for="toggle-contraste" class="lbl-acessibilidade" role="button" tabindex="0">
+        <span style="font-size: 1.4rem;">🌓</span>
+        <span>Modo Noturno / Alto Contraste</span>
+      </label>
+    </div>
+  </nav>
+
+  <!-- ENVOLTÓRIO PRINCIPAL DAS PÁGINAS -->
+  <div class="app-wrapper">
+    
+    <!-- CABEÇALHO -->
+    <header>
+      <div class="container">
+        <h1>Guia de Segurança Digital para a Melhor Idade 🛡️</h1>
+        <p class="subtitulo">Aprenda a navegar na internet e usar seu celular com total tranquilidade, segurança e autonomia.</p>
+      </div>
+    </header>
+
+    <main class="container">
+
+      <!-- SEÇÃO 1: DICAS PRÁTICAS DE SEGURANÇA -->
+      <section>
+        <h2 class="secao-titulo">
+          <span>💡</span> Dicas Práticas de Segurança
+        </h2>
+
+        <!-- Card 1: Mensagens de Golpes -->
+        <article class="card">
+          <div class="card-header">
+            <div class="card-icon" aria-hidden="true">🚨</div>
+            <h3>Golpes por Mensagem (SMS e WhatsApp)</h3>
+          </div>
+          <ul class="lista-dicas">
+            <li><strong>Nunca clique em links</strong> recebidos de números desconhecidos.</li>
+            <li>Se receber mensagem de um familiar dizendo que trocou de número pedindo dinheiro, <strong>desconfie na hora</strong>.</li>
+            <li>Nunca envie códigos numéricos que chegarem no seu celular para ninguém.</li>
+          </ul>
+          <div class="alerta-caixa">
+            <span>⚠️</span>
+            <span><strong>Regra de Ouro:</strong> Empresas e bancos sérios nunca pedem senhas ou códigos por WhatsApp!</span>
+          </div>
+        </article>
+
+        <!-- Card 2: Golpes Bancários e PIX -->
+        <article class="card">
+          <div class="card-header">
+            <div class="card-icon" aria-hidden="true">🏦</div>
+            <h3>Cuidado com Golpes de Banco e PIX</h3>
+          </div>
+          <ul class="lista-dicas">
+            <li><strong>Confirme o nome do recebedor</strong> na tela do celular antes de digitar sua senha do PIX.</li>
+            <li>Se ligarem dizendo que sua conta foi invadida e pedindo para fazer uma transferência para "proteger o dinheiro", <strong>é golpe!</strong></li>
+            <li>Não aceite ajuda de estranhos nos caixas eletrônicos do banco.</li>
+          </ul>
+        </article>
+
+        <!-- Card 3: Senhas Seguras -->
+        <article class="card">
+          <div class="card-header">
+            <div class="card-icon" aria-hidden="true">🔑</div>
+            <h3>Como Criar e Guardar Senhas Seguras</h3>
+          </div>
+          <ul class="lista-dicas">
+            <li>Evite usar datas de nascimento, 123456 ou seu próprio nome como senha.</li>
+            <li>Use combinações com letras e números fáceis de você lembrar.</li>
+            <li><strong>Dica Prática:</strong> Anote suas senhas em um caderno físico mantido em um local seguro na sua casa. É muito mais seguro do que guardar no próprio celular!</li>
+          </ul>
+        </article>
+
+        <!-- Card 4: Chamadas Suspeitas -->
+        <article class="card">
+          <div class="card-header">
+            <div class="card-icon" aria-hidden="true">📞</div>
+            <h3>Ligações Telefonicas Suspeitas</h3>
+          </div>
+          <ul class="lista-dicas">
+            <li>Se ligarem dizendo que sequestraram um parente ou que você ganhou um prêmio que não conhecia: <strong>Desligue imediatamente!</strong></li>
+            <li>Mantenha a calma. Ligue direto para o número do seu familiar que você já tem salvo na agenda.</li>
+          </ul>
+        </article>
+
+        <!-- Card 5: Compras Online -->
+        <article class="card">
+          <div class="card-header">
+            <div class="card-icon" aria-hidden="true">🌐</div>
+            <h3>Compras Seguras na Internet</h3>
+          </div>
+          <ul class="lista-dicas">
+            <li>Compre apenas em lojas conhecidas e famosas.</li>
+            <li>Verifique se há o símbolo de um <strong>cadeado fechado</strong> ao lado do endereço do site no topo da tela.</li>
+            <li>Desconfie de produtos com preços absurdamente baratos.</li>
+          </ul>
+        </article>
+      </section>
+
+      <!-- SEÇÃO 2: QUIZ / TESTE DE ATENÇÃO -->
+      <section>
+        <h2 class="secao-titulo">
+          <span>🧠</span> Teste Seu Aprendizado (Quiz de Segurança)
+        </h2>
+        <p style="margin-bottom: 20px;">Leia as situações abaixo e tente adivinhar se é um GOLPE ou algo SEGURO. Clique na caixa para conferir!</p>
+
+        <!-- Situação 1 -->
+        <div class="quiz-card">
+          <p class="quiz-pergunta">1. Você recebe uma mensagem no WhatsApp do seu filho dizendo que mudou de número e precisa que você pague uma conta urgente agora.</p>
+          <details>
+            <summary>É GOLPE ou SEGURO?</summary>
+            <div class="resposta-conteudo resposta-golpe">
+              <p><strong>❌ É GOLPE!</strong></p>
+              <p>Os criminosos pegam fotos da internet para se passar por parentes. Sempre ligue para o número antigo do seu parente para confirmar antes de enviar qualquer dinheiro.</p>
+            </div>
+          </details>
+        </div>
+
+        <!-- Situação 2 -->
+        <div class="quiz-card">
+          <p class="quiz-pergunta">2. O gerente do banco liga para o seu celular pedindo para você falar a sua senha secreta para cancelar uma compra suspeita.</p>
+          <details>
+            <summary>É GOLPE ou SEGURO?</summary>
+            <div class="resposta-conteudo resposta-golpe">
+              <p><strong>❌ É GOLPE!</strong></p>
+              <p>Gerentes e funcionários de banco NUNCA pedem sua senha por telefone. Desligue imediatamente!</p>
+            </div>
+          </details>
+        </div>
+
+        <!-- Situação 3 -->
+        <div class="quiz-card">
+          <p class="quiz-pergunta">3. Você quer fazer compras online e entra diretamente no site oficial de uma loja grande que você já conhece.</p>
+          <details>
+            <summary>É GOLPE ou SEGURO?</summary>
+            <div class="resposta-conteudo resposta-seguro">
+              <p><strong>✅ É SEGURO!</strong></p>
+              <p>Acessar lojas conhecidas digitando o endereço ou usando o aplicativo oficial é a forma correta e segura de fazer compras na internet.</p>
+            </div>
+          </details>
+        </div>
+      </section>
+
+      <!-- SEÇÃO 3: NÚMEROS DE EMERGÊNCIA -->
+      <section>
+        <h2 class="secao-titulo">
+          <span>📞</span> Telefones Úteis e de Emergência
+        </h2>
+        <p>Se você desconfia que caiu em um golpe ou precisa de ajuda, toque no botão verde para ligar diretamente:</p>
+
+        <div class="grid-emergencia">
+          <!-- Polícia Militar -->
+          <div class="card-emergencia">
+            <div>
+              <h3>Polícia Militar</h3>
+              <p>Para emergências imediatas ou se sentir em perigo.</p>
+            </div>
+            <a href="tel:190" class="btn-ligar" aria-label="Ligar para a Polícia Militar no número 190">
+              📞 Ligar 190
+            </a>
+          </div>
+
+          <!-- PROCON -->
+          <div class="card-emergencia">
+            <div>
+              <h3>PROCON</h3>
+              <p>Para problemas com compras, lojas ou bancos.</p>
+            </div>
+            <a href="tel:151" class="btn-ligar" aria-label="Ligar para o Procon no número 151">
+              📞 Ligar 151
+            </a>
+          </div>
+
+          <!-- Disque Denúncia / Direitos Humanos -->
+          <div class="card-emergencia">
+            <div>
+              <h3>Disque 100</h3>
+              <p>Apoio aos Direitos da Pessoa Idosa e denúncias.</p>
+            </div>
+            <a href="tel:100" class="btn-ligar" aria-label="Ligar para o Disque Direitos Humanos no número 100">
+              📞 Ligar 100
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- RODAPÉ -->
+    <footer>
+      <div class="container">
+        <p><strong>Guia de Acessibilidade Digital</strong></p>
+        <p>Desenvolvido com carinho para promover a segurança e a inclusão da terceira idade na internet.</p>
+        <p style="margin-top: 10px; font-size: 0.9rem;">Compartilhe este guia com seus amigos e familiares! ❤️</p>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+</html>
